@@ -19,13 +19,13 @@ public class ConsolaLogin {
      * Controla el ciclo principal del menú del sistema.
      */
     public void menu() {
-        int opccion;
+        int opcion;
         do {
             mostrarOpciones();
-            opccion = obtenerOpcion();
-            ejecutarOpcion(opccion);
+            opcion = obtenerOpcion();
+            ejecutarOpcion(opcion);
         }
-        while (opccion != 2);
+        while (opcion != 2);
     }
 
     /**
