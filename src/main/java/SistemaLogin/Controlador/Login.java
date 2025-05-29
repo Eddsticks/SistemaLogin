@@ -22,7 +22,6 @@ public class Login {
                 return true;
             }
         }
-        // TODO: Buscar la línea "usuario;clave" en datos.getCredenciales().
         return false;
     }
 }
