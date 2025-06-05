@@ -44,6 +44,8 @@ public class ConsolaLogin {
 
             if (login.autenticar(usuario, clave, datos)) {
                 System.out.println("Inicio de sesión exitoso.");
+                SesionActiva sesionActiva = new SesionActiva(usuario);
+                sesionActiva.menuSesion();
                 return;
             } else {
                 intentos--;
@@ -90,6 +92,7 @@ public class ConsolaLogin {
     private void ejecutarOpcion(int opcion) {
         switch (opcion) {
             case 1 -> manejarLogin();
+
             case 2 -> System.out.println("Saliendo...");
             default -> System.out.println("Opción no reconocida.");
         }
