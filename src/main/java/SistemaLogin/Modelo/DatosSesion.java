@@ -1,8 +1,6 @@
 package SistemaLogin.Modelo;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
 
 /**
@@ -20,7 +18,21 @@ public class DatosSesion {
      * Crea el archivo de tareas si no existe.
      */
     private void crearArchivoSiNoExiste() {
-        // TODO: Verificar existencia del archivo y crearlo si no existe.
+        File file = new File((nombreArchivo));
+
+        if (!file.exists()) {
+            try {
+                if (file.createNewFile()) {
+                    System.out.println("Archivo de tareas '" + nombreArchivo + "' creado exitosamente.");
+                } else {
+                    System.out.println("No se pudo crear el archivo de tareas '" + nombreArchivo + "'.");
+                }
+            } catch (IOException e) {
+                System.err.println("Error al crear el archivo de tareas '" + nombreArchivo + "': " + e.getMessage());
+            }
+        } else {
+            System.out.println("El archivo de tareas '" + nombreArchivo + "' ya existe.");
+        }
     }
 
     /**
@@ -30,14 +42,36 @@ public class DatosSesion {
      * @return true si se guardó correctamente, false si ocurrió un error.
      */
     public boolean escribirTarea(String tarea) {
-        // TODO: Implementar escritura en el archivo.
-        return false;
+        try (FileWriter writer = new FileWriter(nombreArchivo, true)) {
+            writer.write(tarea + System.lineSeparator());
+            System.out.println("Tarea guardada en : '" + nombreArchivo + "'");
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error al escribir la tarea.");
+            return false;
+        }
     }
 
     /**
      * Muestra todas las tareas almacenadas en el archivo.
      */
     public void mostrarTareas() {
-        // TODO: Leer y mostrar cada línea del archivo.
+        System.out.println("\n==== Tus Tareas en '" + nombreArchivo + "'");
+        try (BufferedReader reader = new BufferedReader(new FileReader(nombreArchivo))) {
+            String linea;
+            int contadorTareas = 0;
+            while ((linea = reader.readLine()) != null) {
+                if (!linea.trim().isEmpty()) {
+                    contadorTareas++;
+                    System.out.println(contadorTareas + ". " + linea);
+                }
+            }
+            if (contadorTareas == 0) {
+                System.out.println("No tienes tareas registradas.");
+            }
+        } catch (IOException e) {
+            System.out.println("Error al leer tareas");
+        }
+        System.out.println("===============================\n");
     }
 }

@@ -16,7 +16,12 @@ public class Login {
      * @return true si son válidas, false si no
      */
     public boolean autenticar(String usuario, String clave, DatosLogin datos) {
-        // TODO: Buscar la línea "usuario;clave" en datos.getCredenciales().
+        String intento = usuario + ";" + clave;
+        for (String credencial : datos.getCredenciales()) {
+            if (credencial.equals(intento)) {
+                return true;
+            }
+        }
         return false;
     }
 }

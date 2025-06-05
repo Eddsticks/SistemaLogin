@@ -1,8 +1,6 @@
 package SistemaLogin.Modelo;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -10,8 +8,8 @@ import java.util.Scanner;
  * Gestiona el archivo login.txt.
  */
 public class DatosLogin {
-    private final String archivo = "login.txt";
     private final ArrayList<String> credenciales = new ArrayList<>();
+    private final String archivo = "login.txt";
 
     public DatosLogin() {
         crearArchivoSiNoExiste();
@@ -29,13 +27,38 @@ public class DatosLogin {
      * Crea el archivo login.txt si no existe.
      */
     private void crearArchivoSiNoExiste() {
-        // TODO: Verificar existencia del archivo y crearlo si no existe.
+        File file = new File(archivo);
+
+        if (!file.exists()) {
+            try {
+                if (file.createNewFile()) {
+                    System.out.println("Archivo 'login.txt' creado con éxito.\n");
+                } else {
+                    System.out.println("No se puede crear el archivo.");
+                }
+            } catch (IOException e) {
+                System.err.println("Error al crear el archivo 'login.txt': " + e.getMessage());
+            }
+        } else {
+            System.out.println("El archivo 'login.txt' ya existe");
+        }
     }
 
     /**
      * Carga los pares usuario;clave desde el archivo a la lista.
      */
     private void cargarUsuarios() {
-        // TODO: Leer línea por línea y agregar solo las válidas al ArrayList.
+
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                linea = linea.trim();
+                if (!linea.isEmpty() && linea.contains(";")) {
+                    credenciales.add(linea);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo: " + e.getMessage());
+        }
     }
 }
