@@ -2,14 +2,18 @@ package SistemaLogin.Controlador;
 
 import SistemaLogin.Modelo.DatosSesion;
 import SistemaLogin.Modelo.GestorUsuarios;
-import SistemaLogin.Modelo.Tarea;
+import SistemaLogin.Modelo.HistorialSesion;
+import SistemaLogin.Modelo.Prioridad;
 import SistemaLogin.Modelo.Usuario;
 
+import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
  * Representa el ciclo de operaciones disponibles para un usuario autenticado.
+ * Ahora maneja la prioridad de las tareas y muestra un historial de sesión.
  */
 public class SesionActiva {
     private final Usuario usuarioAutenticado;
@@ -30,6 +34,7 @@ public class SesionActiva {
 
     /**
      * Muestra el menú interactivo de la sesión y gestiona las opciones.
+     * Al salir, muestra el historial de la sesión actual.
      */
     public void menuSesion() {
         int opcion;
@@ -40,6 +45,7 @@ public class SesionActiva {
             opcion = obtenerOpcionSesion();
             ejecutarOpcionSesion(opcion, opcionSalir);
         } while (opcion != opcionSalir);
+        mostrarHistorialSesion();
         System.out.println("Cerrando sesión de " + usuarioAutenticado.getNombre() + ". ¡Hasta pronto!");
     }
 
@@ -105,8 +111,37 @@ public class SesionActiva {
         System.out.println("\n==== Escribir Nueva Tarea ====");
         System.out.print("Ingrese la descripción de la tarea: ");
         String descripcionTarea = scanner.nextLine();
-        datosSesion.agregarTarea(descripcionTarea);
+
+        Prioridad prioridadSeleccionada = obtenerPrioridad();
+
+        datosSesion.agregarTarea(descripcionTarea, prioridadSeleccionada);
         System.out.println("=======================\n");
+    }
+
+    /**
+     * Solicita al usuario la prioridad de la tarea y la valida.
+     * @return La Prioridad seleccionada por el usuario.
+     */
+    private Prioridad obtenerPrioridad() {
+        while (true) {
+            System.out.println("Seleccione la prioridad:");
+            System.out.println("1. BAJA\n2. MEDIA\n3. ALTA");
+            System.out.print("Ingrese el número de la prioridad: ");
+            try {
+                int opcionPrioridad = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (opcionPrioridad) {
+                    case 1: return Prioridad.BAJA;
+                    case 2: return Prioridad.MEDIA;
+                    case 3: return Prioridad.ALTA;
+                    default: System.out.println("Opción de prioridad inválida. Intente de nuevo.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada no válida. Por favor, ingrese un número (1-3).");
+                scanner.next();
+            }
+        }
     }
 
     private void registrarUsuario() {
@@ -115,8 +150,24 @@ public class SesionActiva {
         String nuevoUsuario = scanner.nextLine();
         System.out.print("Ingrese la clave para el nuevo registro: ");
         String nuevaClave = scanner.nextLine();
-
         gestorUsuarios.registrar(nuevoUsuario, nuevaClave);
         System.out.println("-------------------------------\n");
+    }
+
+    /**
+     * Muestra un resumen del historial de la sesión actual.
+     */
+    private void mostrarHistorialSesion() {
+        HistorialSesion historial = datosSesion.getHistorial();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+        System.out.println("\n==== Resumen de Sesión ====");
+        System.out.println("Inicio de Sesión: " + historial.getInicio().format(formatter));
+        System.out.println("Tareas Agregadas en esta Sesión: " + historial.getTareasAgregadas());
+        System.out.println("--- Tareas por Prioridad ---");
+        for (Map.Entry<Prioridad, Integer> entry : historial.getTareasPorPrioridad().entrySet()) {
+            System.out.println("- " + entry.getKey().name() + ": " + entry.getValue());
+        }
+        System.out.println("===========================\n");
     }
 }
