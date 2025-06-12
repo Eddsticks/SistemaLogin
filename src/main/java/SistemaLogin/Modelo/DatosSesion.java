@@ -12,6 +12,7 @@ import java.util.Collections;
 public class DatosSesion {
     private final String nombreArchivo;
     private final ArrayList<Tarea> tareas = new ArrayList<>();
+    private final HistorialSesion historial;
 
     /**
      * Constructor que inicializa el nombre del archivo y carga las tareas existentes.
@@ -21,6 +22,7 @@ public class DatosSesion {
      */
     public DatosSesion(String usuario) {
         this.nombreArchivo = usuario + "_todo.txt";
+        this.historial = new HistorialSesion();
         crearArchivoSiNoExiste();
         cargarTareas();
     }
@@ -30,9 +32,11 @@ public class DatosSesion {
      *
      * @param descripcion Texto de la tarea a agregar.
      */
-    public void agregarTarea(String descripcion) {
-        Tarea nuevaTarea = new Tarea(descripcion);
+    public void agregarTarea(String descripcion, Prioridad prioridad) {
+        Tarea nuevaTarea = new Tarea(descripcion, prioridad);
         tareas.add(nuevaTarea);
+
+        historial.registrarNuevaTarea(prioridad);
 
         try (FileWriter writer = new FileWriter(nombreArchivo, true);
              PrintWriter printWriter = new PrintWriter(writer)) {
@@ -44,35 +48,28 @@ public class DatosSesion {
         }
     }
 
-    /**
-     * Devuelve una vista inmutable de la lista de tareas.
-     * Cualquier intento de modificar la lista devuelta resultará en una UnsupportedOperationException.
-     *
-     * @return Una List inmutable de objetos Tarea.
-     */
     public List<Tarea> getTareas() {
         return Collections.unmodifiableList(tareas);
     }
 
-    /**
-     * Muestra todas las tareas almacenadas en el archivo.
-     * Itera sobre la lista 'tareas' en memoria.
-     */
-    public void mostrarTareas() {
-        System.out.println("\n==== Tus Tareas en '" + nombreArchivo + "'");
-        if (tareas.isEmpty()) {
-            System.out.println("No tienes tareas registradas.");
-        } else {
-            for (int i = 0; i < tareas.size(); i++) {
-                System.out.println((i + 1) + ". " + tareas.get(i).getDescripcion());
-            }
-        }
-        System.out.println("===============================\n");
+
+    public HistorialSesion getHistorial() {
+        return historial;
     }
 
-    /**
-     * Crea el archivo de tareas si no existe.
-     */
+    public void mostrarTareas() {
+        System.out.println("\n==== Tus tareas en '" + nombreArchivo + "'");
+        if (tareas.isEmpty()) {
+            System.out.println("No tienes tareas registradas");
+        } else {
+            for (int i = 0; i < tareas.size(); i++) {
+                Tarea tarea = tareas.get(i);
+                System.out.println((i + 1) + ". " + tarea.getDescripcion() + " (Prioridad: " + tarea.getPrioridad().name() + ")");
+            }
+        }
+        System.out.println("===============================");
+    }
+
     private void crearArchivoSiNoExiste() {
         File file = new File(nombreArchivo);
         if (!file.exists()) {
@@ -88,10 +85,6 @@ public class DatosSesion {
         }
     }
 
-    /**
-     * Carga las tareas desde el archivo al ArrayList<Tarea>.
-     * Este método se llama en el constructor.
-     */
     private void cargarTareas() {
         tareas.clear();
         try (BufferedReader reader = new BufferedReader(new FileReader(nombreArchivo))) {
@@ -99,7 +92,18 @@ public class DatosSesion {
             while ((linea = reader.readLine()) != null) {
                 linea = linea.trim();
                 if (!linea.isEmpty()) {
-                    tareas.add(new Tarea(linea));
+                    String[] partes = linea.split(";");
+                    String descripcion = partes[0];
+                    Prioridad prioridad = Prioridad.BAJA;
+
+                    if (partes.length > 1) {
+                        try {
+                            prioridad = Prioridad.valueOf(partes[1].toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            System.err.println("Advertencia: Prioridad inválida para la tarea '" + descripcion + "'. Asignando BAJA. " + e.getMessage());
+                        }
+                    }
+                    tareas.add(new Tarea(descripcion, prioridad));
                 }
             }
         } catch (IOException e) {
