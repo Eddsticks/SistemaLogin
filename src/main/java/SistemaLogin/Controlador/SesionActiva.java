@@ -118,10 +118,6 @@ public class SesionActiva {
         System.out.println("=======================\n");
     }
 
-    /**
-     * Solicita al usuario la prioridad de la tarea y la valida.
-     * @return La Prioridad seleccionada por el usuario.
-     */
     private Prioridad obtenerPrioridad() {
         while (true) {
             System.out.println("Seleccione la prioridad:");
@@ -150,13 +146,13 @@ public class SesionActiva {
         String nuevoUsuario = scanner.nextLine();
         System.out.print("Ingrese la clave para el nuevo registro: ");
         String nuevaClave = scanner.nextLine();
-        gestorUsuarios.registrar(nuevoUsuario, nuevaClave);
+        System.out.print("Ingrese el correo electrónico para el nuevo usuario: ");
+        String nuevoCorreo = scanner.nextLine();
+
+        gestorUsuarios.registrar(nuevoUsuario, nuevaClave, nuevoCorreo);
         System.out.println("-------------------------------\n");
     }
 
-    /**
-     * Muestra un resumen del historial de la sesión actual.
-     */
     private void mostrarHistorialSesion() {
         HistorialSesion historial = datosSesion.getHistorial();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
