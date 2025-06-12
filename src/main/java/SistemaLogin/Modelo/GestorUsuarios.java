@@ -3,45 +3,58 @@ package SistemaLogin.Modelo;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
- * Registra nuevos usuarios en login.txt.
+ * Clase que permite registrar nuevos usuarios en el archivo login.txt.
+ * No almacena datos en memoria, trabaja directamente sobre el archivo.
  */
 public class GestorUsuarios {
-    private final String archivo = "login.txt";
 
+    private static final String NOMBRE_ARCHIVO = "login.txt";
+
+    /**
+     * Constructor por defecto. Verifica la existencia del archivo de usuarios.
+     * Si no existe, intenta crearlo.
+     */
     public GestorUsuarios() {
         crearArchivoSiNoExiste();
-        // TODO: Crear archivo si no existe.
     }
 
     /**
      * Crea el archivo login.txt si no existe.
-     * Esta es una copia de la lógica de DatosLogin para asegurar que el GestorUsuarios
-     * siempre pueda escribir en el archivo.
+     * Proporciona una robustez adicional para esta clase si es instanciada
+     * antes o sin que DatosLogin lo haya hecho.
      */
     private void crearArchivoSiNoExiste() {
-        File file = new File(archivo);
+        File file = new File(NOMBRE_ARCHIVO);
 
         if (!file.exists()) {
             try {
                 if (file.createNewFile()) {
-                    System.out.println("[GestorUsuarios] Archivo 'login.txt' creado exitosamente para registro.");
+                    System.out.println("GestorUsuarios: Archivo '" + NOMBRE_ARCHIVO + "' creado exitosamente para registro.");
                 } else {
-                    System.err.println("[GestorUsuarios] No se pudo crear el archivo 'login.txt' para registro.");
+                    System.err.println("GestorUsuarios: No se pudo crear el archivo '" + NOMBRE_ARCHIVO + "' para registro.");
                 }
             } catch (IOException e) {
-                System.err.println("[GestorUsuarios] Error al crear el archivo 'login.txt': " + e.getMessage());
+                System.err.println("GestorUsuarios: Error al crear el archivo '" + NOMBRE_ARCHIVO + "': " + e.getMessage());
             }
         }
-        // No se imprime nada si ya existe, ya que DatosLogin ya lo gestiona y lo informa.
     }
 
+    /**
+     * Registra un nuevo usuario en el archivo login.txt.
+     * Los datos se añaden al final del archivo.
+     *
+     * @param usuario Nombre del nuevo usuario.
+     * @param clave Contraseña del nuevo usuario.
+     * @return true si el registro fue exitoso, false si ocurrió un error.
+     */
     public boolean registrar(String usuario, String clave) {
-        String nuevaCredencial = usuario + ";" + clave;
+        try (FileWriter fileWriter = new FileWriter(NOMBRE_ARCHIVO, true);
+             PrintWriter printWriter = new PrintWriter(fileWriter)) {
 
-        try (FileWriter writer = new FileWriter(archivo, true)) {
-            writer.write(nuevaCredencial + System.lineSeparator());
+            printWriter.println(usuario + ";" + clave);
             System.out.println("Usuario '" + usuario + "' registrado exitosamente.");
             return true;
         } catch (IOException e) {

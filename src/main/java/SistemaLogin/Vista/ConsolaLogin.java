@@ -3,12 +3,14 @@ package SistemaLogin.Vista;
 import SistemaLogin.Controlador.Login;
 import SistemaLogin.Controlador.SesionActiva;
 import SistemaLogin.Modelo.DatosLogin;
+import SistemaLogin.Modelo.Usuario;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
- * Vista principal del sistema.
- * Interactúa con el usuario mediante consola.
+ * Vista principal del sistema. Muestra el menú por consola
+ * y gestiona el proceso de autenticación.
  */
 public class ConsolaLogin {
     private static final Scanner scanner = new Scanner(System.in);
@@ -16,7 +18,7 @@ public class ConsolaLogin {
     private final Login login = new Login();
 
     /**
-     * Controla el ciclo principal del menú del sistema.
+     * Muestra el menú principal del sistema y controla el ciclo de interacción.
      */
     public void menu() {
         int opcion;
@@ -24,27 +26,30 @@ public class ConsolaLogin {
             mostrarOpciones();
             opcion = obtenerOpcion();
             ejecutarOpcion(opcion);
-        }
-        while (opcion != 2);
+        } while (opcion != 2);
+        System.out.println("¡Gracias por usar el sistema!");
     }
 
     /**
-     * Solicita usuario y contraseña y maneja la autenticación.
+     * Solicita usuario y contraseña, autentica, y lanza la sesión si corresponde.
+     * Permite hasta 3 intentos de autenticación.
      */
     private void manejarLogin() {
         int intentos = 3;
         scanner.nextLine();
 
         while (intentos > 0) {
-            System.out.println("Usuario: ");
-            String usuario = scanner.nextLine();
+            System.out.print("Usuario: ");
+            String nombreUsuario = scanner.nextLine();
 
-            System.out.println("Clave: ");
-            String clave = scanner.nextLine();
+            System.out.print("Clave: ");
+            String claveIngresada = scanner.nextLine();
 
-            if (login.autenticar(usuario, clave, datos)) {
-                System.out.println("Inicio de sesión exitoso.");
-                SesionActiva sesionActiva = new SesionActiva(usuario);
+            Usuario usuarioAutenticado = login.autenticar(nombreUsuario, claveIngresada, datos);
+
+            if (usuarioAutenticado != null) {
+                System.out.println("Inicio de sesión exitoso como " + usuarioAutenticado.getNombre() + ".");
+                SesionActiva sesionActiva = new SesionActiva(usuarioAutenticado);
                 sesionActiva.menuSesion();
                 return;
             } else {
@@ -52,49 +57,49 @@ public class ConsolaLogin {
                 System.out.println("Credenciales incorrectas. Intentos restantes: " + intentos);
             }
         }
-        System.out.println("Demasiados intentos fallidos. Volviendo a inicio...\n");
+        System.out.println("Demasiados intentos fallidos. Volviendo al menú principal.\n");
     }
 
     /**
-     * Muestra el menú principal.
+     * Muestra las opciones del menú principal.
      */
     private void mostrarOpciones() {
-        System.out.println("==== INICIO DE SESIÓN ====");
-        System.out.println("1. Iniciar sesión.\n2. Salir.\n");
+        System.out.println("\n==== SISTEMA DE TAREAS ====");
+        System.out.println("1. Iniciar sesión.");
+        System.out.println("2. Salir.");
+        System.out.print("Ingrese una opción: ");
     }
 
     /**
-     * Analiza la entrada proporcionada por el usuario.
-     * @return opción elegida.
+     * Solicita y valida la opción ingresada por el usuario.
+     * @return La opción elegida por el usuario (1 o 2).
      */
     private static int obtenerOpcion() {
         while (true) {
-            System.out.println("Ingrese una opción: ");
-            if (scanner.hasNextInt()) {
+            try {
                 int opcion = scanner.nextInt();
                 if (opcion == 1 || opcion == 2) {
                     return opcion;
                 } else {
-                    System.out.println("Ingrese 1 ó 2.");
+                    System.out.print("Opción inválida. Por favor, ingrese 1 para iniciar sesión o 2 para salir: ");
                 }
-            } else {
-                System.out.println("Entrada no válida.");
+            } catch (InputMismatchException e) {
+                System.out.print("Entrada no válida. Por favor, ingrese un número: ");
                 scanner.next();
             }
         }
     }
 
     /**
-     * Ejecuta la opción seleccionada por el usuario.
+     * Ejecuta la acción correspondiente a la opción seleccionada.
      *
-     * @param opcion opción ingresada por el usuario
+     * @param opcion La opción ingresada por el usuario.
      */
     private void ejecutarOpcion(int opcion) {
         switch (opcion) {
             case 1 -> manejarLogin();
-
-            case 2 -> System.out.println("Saliendo...");
-            default -> System.out.println("Opción no reconocida.");
+            case 2 -> { /* El mensaje de salida se imprime en el método menu() */ }
+            default -> System.out.println("Opción no reconocida. Vuelva a intentar.");
         }
     }
 }

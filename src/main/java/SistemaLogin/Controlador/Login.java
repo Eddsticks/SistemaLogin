@@ -1,6 +1,7 @@
 package SistemaLogin.Controlador;
 
 import SistemaLogin.Modelo.DatosLogin;
+import SistemaLogin.Modelo.Usuario;
 
 /**
  * Clase encargada de la lógica de autenticación.
@@ -8,20 +9,22 @@ import SistemaLogin.Modelo.DatosLogin;
 public class Login {
 
     /**
-     * Verifica si las credenciales son válidas.
+     * Verifica si las credenciales son válidas buscando una coincidencia
+     * en la lista de objetos Usuario proporcionada por DatosLogin.
      *
-     * @param usuario nombre ingresado
-     * @param clave contraseña ingresada
-     * @param datos instancia de DatosLogin
-     * @return true si son válidas, false si no
+     * @param nombreUsuario Nombre de usuario ingresado.
+     * @param claveIngresada Contraseña ingresada.
+     * @param datos Instancia de DatosLogin que contiene la lista de usuarios.
+     * @return El objeto Usuario autenticado si las credenciales son válidas,
+     * o null si la autenticación falla.
      */
-    public boolean autenticar(String usuario, String clave, DatosLogin datos) {
-        String intento = usuario + ";" + clave;
-        for (String credencial : datos.getCredenciales()) {
-            if (credencial.equals(intento)) {
-                return true;
+    public Usuario autenticar(String nombreUsuario, String claveIngresada, DatosLogin datos) {
+        for (Usuario usuarioAlmacenado : datos.getUsuarios()) {
+            if (usuarioAlmacenado.getNombre().equals(nombreUsuario) &&
+                    usuarioAlmacenado.getClave().equals(claveIngresada)) {
+                return usuarioAlmacenado;
             }
         }
-        return false;
+        return null;
     }
 }
