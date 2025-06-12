@@ -50,11 +50,11 @@ public class GestorUsuarios {
      * @param clave Contraseña del nuevo usuario.
      * @return true si el registro fue exitoso, false si ocurrió un error.
      */
-    public boolean registrar(String usuario, String clave) {
+    public boolean registrar(String usuario, String clave, String correo) {
         try (FileWriter fileWriter = new FileWriter(NOMBRE_ARCHIVO, true);
              PrintWriter printWriter = new PrintWriter(fileWriter)) {
 
-            printWriter.println(usuario + ";" + clave);
+            printWriter.println(usuario + ";" + clave + ";" + correo);
             System.out.println("Usuario '" + usuario + "' registrado exitosamente.");
             return true;
         } catch (IOException e) {

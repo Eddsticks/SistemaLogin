@@ -49,7 +49,8 @@ public class DatosLogin {
     }
 
     /**
-     * Carga los pares usuario;clave desde el archivo a la lista de objetos Usuario.
+     * Carga los usuarios desde el archivo a la lista de objetos Usuario.
+     * Ahora espera el formato: usuario;clave;correo.
      */
     private void cargarUsuarios() {
         usuarios.clear();
@@ -60,10 +61,17 @@ public class DatosLogin {
                 linea = linea.trim();
                 if (!linea.isEmpty() && linea.contains(";")) {
                     String[] partes = linea.split(";");
-                    if (partes.length == 2) {
-                        usuarios.add(new Usuario(partes[0], partes[1]));
+                    if (partes.length >= 2) {
+                        String nombre = partes[0];
+                        String clave = partes[1];
+                        String correo = "";
+
+                        if (partes.length >= 3) {
+                            correo = partes[2];
+                        }
+                        usuarios.add(new Usuario(nombre, clave, correo));
                     } else {
-                        System.err.println("Advertencia: Línea con formato incorrecto en " + NOMBRE_ARCHIVO + ": " + linea);
+                        System.err.println("Advertencia: Línea con formato incorrecto en " + NOMBRE_ARCHIVO + " (faltan usuario, clave o correo): " + linea);
                     }
                 }
             }
