@@ -1,4 +1,0 @@
-admin;4567;admin@sistema.com
-Konpeki;1234;konpeki@example.com
-Silverhand;2077;cyber.punk@system.com
-James;jamespro3737;james_gamerxd@ubuntu.com

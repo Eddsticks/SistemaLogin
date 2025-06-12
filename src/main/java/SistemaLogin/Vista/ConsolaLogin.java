@@ -27,7 +27,7 @@ public class ConsolaLogin {
             opcion = obtenerOpcion();
             ejecutarOpcion(opcion);
         } while (opcion != 2);
-        System.out.println("¡Gracias por usar el sistema!");
+        System.out.println("Cerrando el sistema...");
     }
 
     /**
@@ -57,7 +57,7 @@ public class ConsolaLogin {
                 System.out.println("Credenciales incorrectas. Intentos restantes: " + intentos);
             }
         }
-        System.out.println("Demasiados intentos fallidos. Volviendo al menú principal.\n");
+        System.out.println("Límite de intentos alcanzado. Volviendo al menú principal.\n");
     }
 
     /**
@@ -81,10 +81,10 @@ public class ConsolaLogin {
                 if (opcion == 1 || opcion == 2) {
                     return opcion;
                 } else {
-                    System.out.print("Opción inválida. Por favor, ingrese 1 para iniciar sesión o 2 para salir: ");
+                    System.out.print("Opción no válida.");
                 }
             } catch (InputMismatchException e) {
-                System.out.print("Entrada no válida. Por favor, ingrese un número: ");
+                System.out.print("Entrada no válida.");
                 scanner.next();
             }
         }
@@ -98,7 +98,7 @@ public class ConsolaLogin {
     private void ejecutarOpcion(int opcion) {
         switch (opcion) {
             case 1 -> manejarLogin();
-            case 2 -> { /* El mensaje de salida se imprime en el método menu() */ }
+            case 2 -> { } //Definido en menú()
             default -> System.out.println("Opción no reconocida. Vuelva a intentar.");
         }
     }

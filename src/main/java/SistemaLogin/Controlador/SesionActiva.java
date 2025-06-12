@@ -39,6 +39,7 @@ public class SesionActiva {
     public void menuSesion() {
         int opcion;
         int opcionSalir = usuarioAutenticado.getNombre().equals("admin") ? 4 : 3;
+        System.out.println("\n==== Bienvenido! " + usuarioAutenticado.getNombre().toUpperCase() + " ====");
 
         do {
             mostrarOpcionesSesion();
@@ -46,11 +47,11 @@ public class SesionActiva {
             ejecutarOpcionSesion(opcion, opcionSalir);
         } while (opcion != opcionSalir);
         mostrarHistorialSesion();
-        System.out.println("Cerrando sesión de " + usuarioAutenticado.getNombre() + ". ¡Hasta pronto!");
+        System.out.println("Cerrando sesión de " + usuarioAutenticado.getNombre().toUpperCase() + "...");
     }
 
     private void mostrarOpcionesSesion() {
-        System.out.println("\n==== Bienvenido! " + usuarioAutenticado.getNombre().toUpperCase() + " ====");
+        System.out.println("\nSesión de: " + usuarioAutenticado.getNombre().toUpperCase() + ".");
         System.out.println("1. Escribir nueva tarea.");
         System.out.println("2. Mostrar Mis tareas.");
         if (usuarioAutenticado.getNombre().equals("admin")) {

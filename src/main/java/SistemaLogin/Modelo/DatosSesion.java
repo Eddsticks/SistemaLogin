@@ -58,7 +58,7 @@ public class DatosSesion {
     }
 
     public void mostrarTareas() {
-        System.out.println("\n==== Tus tareas en '" + nombreArchivo + "'");
+        System.out.println("\n==== Tus tareas en '" + nombreArchivo + "' ====");
         if (tareas.isEmpty()) {
             System.out.println("No tienes tareas registradas");
         } else {
