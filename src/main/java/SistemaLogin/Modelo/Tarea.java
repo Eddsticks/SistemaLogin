@@ -1,17 +1,22 @@
 package SistemaLogin.Modelo;
+
 /**
  * Representa una tarea individual del usuario.
  */
 public class Tarea {
     private String descripcion;
+    private Prioridad prioridad;
 
     /**
-     * Constructor que inicializa la descripción de la tarea.
-     *
-     * @param descripcion contenido de la tarea
+     * Inicializa la descripción de la tarea.
      */
-    public Tarea(String descripcion) {
+    public Tarea(String descripcion, Prioridad prioridad) {
         this.descripcion = descripcion;
+        this.prioridad = prioridad;
+    }
+
+    public Tarea(String descripcion) {
+        this(descripcion, Prioridad.BAJA);
     }
 
     public String getDescripcion() {
@@ -20,5 +25,13 @@ public class Tarea {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public Prioridad getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(Prioridad prioridad) {
+        this.prioridad = prioridad;
     }
 }
